@@ -11,20 +11,11 @@ dotnet_csproj:
   file_version: '$(appveyor_build_version)'
   informational_version: '$(appveyor_build_version)'
 build_script:
-- cmd: >-
-    dotnet build src\PaketSorter.sln --runtime win-x64 --configuration Release
-
-    dotnet build src\PaketSorter.sln --runtime osx-x64 --configuration Release
-
-    dotnet build src\PaketSorter.sln --runtime linux-x64 --configuration Release
+- cmd: dotnet publish src\PaketSorter.sln --runtime win-x64 --configuration Release
 test: off
 artifacts:
 - path: src\PaketSorter\bin\Release\netcoreapp2.2\publish\win-x64
-  name: PaketSorter.Windows.$(appveyor_build_version)
-- path: src\PaketSorter\bin\Release\netcoreapp2.2\publish\osx-x64
-  name: PaketSorter.OSX.$(appveyor_build_version)
-- path: src\PaketSorter\bin\Release\netcoreapp2.2\publish\linux-x64
-  name: PaketSorter.Linux.$(appveyor_build_version)
+  name: PaketSorter.$(appveyor_build_version)
 deploy:
 - provider: GitHub
   tag: v$(appveyor_build_version)
@@ -33,6 +24,6 @@ deploy:
   auth_token:
     secure: g+iWKsE2NIl0nbHRppdKG9viG1Drk5x6U++4dXtMfM9FLyOFqaRafq6qKpkyO9x7
   repository: BlythMeister/PaketSorter
-  artifact: /.*/PaketSorter\..*\.zip/
+  artifact: src\PaketSorter\bin\Release\netcoreapp2.2\PaketSorter.$(appveyor_build_version).zip
   on:
     branch: master

@@ -1,0 +1,29 @@
+version: 1.0.{build}
+skip_tags: true
+skip_branch_with_pr: true
+image: Visual Studio 2017
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+build_script:
+- cmd: dotnet build src\PaketSorter.sln --runtime win-x64 --configuration Release
+test: off
+artifacts:
+- path: src\PaketSorter\bin\Release\netcoreapp2.2\win-x64
+  name: App
+deploy:
+- provider: GitHub
+  tag: v$(appveyor_build_version)
+  release: v$(appveyor_build_version)
+  description: Release v$(appveyor_build_version)
+  auth_token:
+    secure: g+iWKsE2NIl0nbHRppdKG9viG1Drk5x6U++4dXtMfM9FLyOFqaRafq6qKpkyO9x7
+  repository: BlythMeister/PaketSorter
+  artifact: src\PaketSorter\bin\Release\netcoreapp2.2\App.zip
+  on:
+    branch: master

@@ -23,19 +23,8 @@ namespace PaketSorter
 
             try
             {
-                if (string.IsNullOrWhiteSpace(Directory))
-                {
-                    var directory = Prompt.GetString("Please enter path to root of a repository: ");
-                    if (directory == null)
-                    {
-                        throw new Exception("Directory is not provided");
-                    }
-                    sorter.Run(directory);
-                }
-                else
-                {
-                    sorter.Run(Directory);
-                }
+                var dir = string.IsNullOrWhiteSpace(Directory) ? Environment.CurrentDirectory : Directory;
+                sorter.Run(dir);
 
                 Console.WriteLine($"Done at {DateTime.UtcNow:u}");
                 return 0;

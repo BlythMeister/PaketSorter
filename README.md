@@ -17,7 +17,7 @@ A command line application to update, sort, simplify & install paket dependencie
 Usage: PaketSorter [options]
 
 Options:
-  -d|--dir <PATH>             The path to a root of a repository (Note: <PATH> should be in quotes)
+  -d|--dir <PATH>             The path to a root of a repository, defaults to current directory if not provided (Note: <PATH> should be in quotes)
   -ua|--update-args <ARGS>    Args to pass to paket update (Note: <ARGS> should be in quotes)
   -ia|--install-args <ARGS>   Args to pass to paket install (Note: <ARGS> should be in quotes)
   -sa|--simplify-args <ARGS>  Args to pass to paket simplify (Note: <ARGS> should be in quotes)

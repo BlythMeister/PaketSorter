@@ -1,6 +1,8 @@
 # Paket Sorter
 
 [![Build status](https://ci.appveyor.com/api/projects/status/t3y8umshr09nwj82/branch/master?svg=true)](https://ci.appveyor.com/project/BlythMeister/paketsorter/branch/master)
+[![Release](https://img.shields.io/github/release/BlythMeister/PaketSorter.svg?style=flat)](https://github.com/BlythMeister/PaketSorter/releases/latest)
+[![Issues](https://img.shields.io/github/issues/BlythMeister/PaketSorter.svg?style=flat)](https://github.com/BlythMeister/PaketSorter/issues)
 
 A command line application to update, sort, simplify & install paket dependencies
 

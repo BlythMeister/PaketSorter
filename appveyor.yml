@@ -5,17 +5,17 @@ image: Visual Studio 2017
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  version: '{version}'
-  package_version: '{version}'
-  assembly_version: '{version}'
-  file_version: '{version}'
-  informational_version: '{version}'
+  version: '$(appveyor_build_version)'
+  package_version: '$(appveyor_build_version)'
+  assembly_version: '$(appveyor_build_version)'
+  file_version: '$(appveyor_build_version)'
+  informational_version: '$(appveyor_build_version)'
 build_script:
 - cmd: dotnet build src\PaketSorter.sln --runtime win-x64 --configuration Release
 test: off
 artifacts:
 - path: src\PaketSorter\bin\Release\netcoreapp2.2\win-x64
-  name: App
+  name: App-$(appveyor_build_version)
 deploy:
 - provider: GitHub
   tag: v$(appveyor_build_version)
@@ -24,6 +24,6 @@ deploy:
   auth_token:
     secure: g+iWKsE2NIl0nbHRppdKG9viG1Drk5x6U++4dXtMfM9FLyOFqaRafq6qKpkyO9x7
   repository: BlythMeister/PaketSorter
-  artifact: src\PaketSorter\bin\Release\netcoreapp2.2\App.zip
+  artifact: src\PaketSorter\bin\Release\netcoreapp2.2\App-$(appveyor_build_version).zip
   on:
     branch: master

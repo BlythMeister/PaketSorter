@@ -11,21 +11,21 @@ namespace PaketSorter
 {
     internal class Sorter
     {
-        internal static int Run(string directory, bool autoClose)
+        public static int Run(string rootDir, bool noPrompt, bool simplify, bool update, string updateArgs, string installArgs, string simplifyArgs)
         {
             Console.WriteLine($"Starting at {DateTime.UtcNow:u}");
 
             try
             {
-                CheckForNewVersion();
-                var rootDir = string.IsNullOrWhiteSpace(directory) ? Environment.CurrentDirectory : directory;
+                CheckForNewVersion(noPrompt);
+                rootDir = string.IsNullOrWhiteSpace(rootDir) ? Environment.CurrentDirectory : rootDir;
                 ValidatePaths(rootDir);
                 Console.WriteLine($"Running against: {rootDir}");
-                RunPaketCommand(rootDir, "update");
+                if (update) RunPaketCommand(rootDir, "update", updateArgs);
                 SortReferences(rootDir);
                 SortDependencies(rootDir);
-                RunPaketCommand(rootDir, "simplify");
-                RunPaketCommand(rootDir, "install");
+                if (simplify) RunPaketCommand(rootDir, "simplify", simplifyArgs);
+                RunPaketCommand(rootDir, "install", installArgs);
 
                 Console.WriteLine($"Done at {DateTime.UtcNow:u}");
                 return 0;
@@ -38,7 +38,7 @@ namespace PaketSorter
             }
             finally
             {
-                if (!autoClose)
+                if (!noPrompt)
                 {
                     Console.WriteLine("Press Enter To Close...");
                     Console.ReadLine();
@@ -46,7 +46,7 @@ namespace PaketSorter
             }
         }
 
-        private static void CheckForNewVersion()
+        private static void CheckForNewVersion(bool noPrompt)
         {
             if (!Debugger.IsAttached)
             {
@@ -65,8 +65,11 @@ namespace PaketSorter
                         if (latestVersion.CompareTo(currentVersion) > 0)
                         {
                             Console.WriteLine("There is a new version of Paket Sorter, visit https://github.com/BlythMeister/PaketSorter/releases/latest to download");
-                            Console.WriteLine($"Press Enter to continue with version {currentVersion}");
-                            Console.ReadLine();
+                            if (!noPrompt)
+                            {
+                                Console.WriteLine($"Press Enter to continue with version {currentVersion}");
+                                Console.ReadLine();
+                            }
                         }
                         else
                         {
@@ -78,8 +81,11 @@ namespace PaketSorter
                 {
                     Console.WriteLine("Unable to check for latest version of Paket Sorter");
                     Console.WriteLine(e);
-                    Console.WriteLine($"Press Enter to continue with version {currentVersion}");
-                    Console.ReadLine();
+                    if (!noPrompt)
+                    {
+                        Console.WriteLine($"Press Enter to continue with version {currentVersion}");
+                        Console.ReadLine();
+                    }
                 }
             }
         }
@@ -102,10 +108,11 @@ namespace PaketSorter
             }
         }
 
-        private static void RunPaketCommand(string rootDir, string command)
+        private static void RunPaketCommand(string rootDir, string command, string args)
         {
-            Console.WriteLine($"Running paket command: {command}");
-            var paketProcess = new ProcessStartInfo(Path.Combine(rootDir, ".paket", "paket.exe"), command)
+            var commandPlusArgs = $"{command} {args ?? string.Empty}".Trim();
+            Console.WriteLine($"Running paket command: {commandPlusArgs}");
+            var paketProcess = new ProcessStartInfo(Path.Combine(rootDir, ".paket", "paket.exe"), commandPlusArgs)
             {
                 WorkingDirectory = rootDir,
                 UseShellExecute = false,

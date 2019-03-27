@@ -13,13 +13,19 @@ A command line application to update, sort, simplify & install paket dependencie
 
 # Usages
 
-`PaketSorter` - Will run the sorter for the directory your currently in.
+```
+Usage: PaketSorter [options]
 
-`PaketSorter --auto-close` or `PaketSorter -ac` - Will run the sorter for the directory your currently in and then close the app after running.
-
-`PaketSorter --dir <Path>` or `PaketSorter -d <Path>` - Will run the sorter for the directory specified, this can also be coupled with the `--auto-close` or `-ac` argument.
-
-`PaketSorter -?` or `PaketSorter -h` or `PakertSorter -help` - Will show the help
+Options:
+  -d|--dir <PATH>             The path to a root of a repository (Note: <PATH> should be in quotes)
+  -ua|--update-args <ARGS>    Args to pass to paket update (Note: <ARGS> should be in quotes)
+  -ia|--install-args <ARGS>   Args to pass to paket install (Note: <ARGS> should be in quotes)
+  -sa|--simplify-args <ARGS>  Args to pass to paket simplify (Note: <ARGS> should be in quotes)
+  -s|--simplify               Include a paket simplify
+  -u|--update                 Include a paket update
+  -np|--no-prompt             Never prompt user input
+  -?|-h|--help                Show help information
+```
 
 # 3rd Party Libraries
 

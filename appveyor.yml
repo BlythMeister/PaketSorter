@@ -14,7 +14,7 @@ build_script:
 - cmd: dotnet publish src\PaketSorter.sln --runtime win-x64 --configuration Release
 test: off
 artifacts:
-- path: src\PaketSorter\bin\Release\netcoreapp2.2\publish\win-x64
+- path: src\PaketSorter\bin\Release\netcoreapp2.2\win-x64\publish
   name: PaketSorter.$(appveyor_build_version)
 deploy:
 - provider: GitHub

@@ -8,15 +8,38 @@ namespace PaketSorter
 {
     internal class Sorter
     {
-        internal void Run(string rootDir)
+        internal static int Run(string directory, bool autoClose)
         {
-            ValidatePaths(rootDir);
-            Console.WriteLine($"Running against: {rootDir}");
-            RunPaketCommand(rootDir, "update");
-            SortReferences(rootDir);
-            SortDependencies(rootDir);
-            RunPaketCommand(rootDir, "simplify");
-            RunPaketCommand(rootDir, "install");
+            Console.WriteLine($"Starting at {DateTime.UtcNow:u}");
+
+            try
+            {
+                var rootDir = string.IsNullOrWhiteSpace(directory) ? Environment.CurrentDirectory : directory;
+                ValidatePaths(rootDir);
+                Console.WriteLine($"Running against: {rootDir}");
+                RunPaketCommand(rootDir, "update");
+                SortReferences(rootDir);
+                SortDependencies(rootDir);
+                RunPaketCommand(rootDir, "simplify");
+                RunPaketCommand(rootDir, "install");
+
+                Console.WriteLine($"Done at {DateTime.UtcNow:u}");
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed at {DateTime.UtcNow:u}");
+                Console.WriteLine(e);
+                return -1;
+            }
+            finally
+            {
+                if (!autoClose)
+                {
+                    Console.WriteLine("Press Enter To Close...");
+                    Console.ReadLine();
+                }
+            }
         }
 
         private static void ValidatePaths(string rootDir)

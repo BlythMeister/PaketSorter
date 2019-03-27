@@ -1,0 +1,6 @@
+RESTRICTION: == netcoreapp2.2
+NUGET
+  remote: https://api.nuget.org/v3/index.json
+    McMaster.Extensions.CommandLineUtils (2.3.3)
+      System.ComponentModel.Annotations (>= 4.4.1)
+    System.ComponentModel.Annotations (4.5)

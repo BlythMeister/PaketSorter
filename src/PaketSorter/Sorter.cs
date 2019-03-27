@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 
 namespace PaketSorter
 {
@@ -14,6 +17,7 @@ namespace PaketSorter
 
             try
             {
+                CheckForNewVersion();
                 var rootDir = string.IsNullOrWhiteSpace(directory) ? Environment.CurrentDirectory : directory;
                 ValidatePaths(rootDir);
                 Console.WriteLine($"Running against: {rootDir}");
@@ -37,6 +41,44 @@ namespace PaketSorter
                 if (!autoClose)
                 {
                     Console.WriteLine("Press Enter To Close...");
+                    Console.ReadLine();
+                }
+            }
+        }
+
+        private static void CheckForNewVersion()
+        {
+            if (!Debugger.IsAttached)
+            {
+                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+                try
+                {
+                    using (var webClient = new WebClient())
+                    {
+                        webClient.Headers.Add("User-Agent", "PaketSorter");
+                        var data = webClient.DownloadString("https://api.github.com/repos/BlythMeister/PaketSorter/releases/latest");
+                        dynamic latestRelease = JObject.Parse(data);
+
+                        var latestVersion = Version.Parse(latestRelease.tag_name.Value.Substring(1));
+
+                        if (latestVersion.CompareTo(currentVersion) > 0)
+                        {
+                            Console.WriteLine("There is a new version of Paket Sorter, visit https://github.com/BlythMeister/PaketSorter/releases/latest to download");
+                            Console.WriteLine($"Press Enter to continue with version {currentVersion}");
+                            Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine("You are already running the latest version of Paket Sorter");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Unable to check for latest version of Paket Sorter");
+                    Console.WriteLine(e);
+                    Console.WriteLine($"Press Enter to continue with version {currentVersion}");
                     Console.ReadLine();
                 }
             }

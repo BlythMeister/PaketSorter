@@ -3,4 +3,5 @@ NUGET
   remote: https://api.nuget.org/v3/index.json
     McMaster.Extensions.CommandLineUtils (2.3.3)
       System.ComponentModel.Annotations (>= 4.4.1)
+    Newtonsoft.Json (12.0.1)
     System.ComponentModel.Annotations (4.5)

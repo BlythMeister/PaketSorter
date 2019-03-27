@@ -1,7 +1,12 @@
 version: 1.0.{build}
+image: Visual Studio 2017
 skip_tags: true
 skip_branch_with_pr: true
-image: Visual Studio 2017
+skip_commits:
+  files:
+    - .github/*
+    - .paket/*
+    - '**/*.md'
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'

@@ -4,7 +4,9 @@
 [![Release](https://img.shields.io/github/release/BlythMeister/PaketSorter.svg?style=flat)](https://github.com/BlythMeister/PaketSorter/releases/latest)
 [![Issues](https://img.shields.io/github/issues/BlythMeister/PaketSorter.svg?style=flat)](https://github.com/BlythMeister/PaketSorter/issues)
 
-A command line application to update, sort, simplify & install paket dependencies
+A command line application call paket in standard folder structures and chain multiple commands together.
+
+With added ability to sort dependencies and references files alphabetically prior to install.
 
 # Installation
 

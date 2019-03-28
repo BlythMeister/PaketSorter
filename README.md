@@ -21,6 +21,7 @@ Options:
   -ua|--update-args <ARGS>    Args to pass to paket update (Note: <ARGS> should be in quotes)
   -ia|--install-args <ARGS>   Args to pass to paket install (Note: <ARGS> should be in quotes)
   -sa|--simplify-args <ARGS>  Args to pass to paket simplify (Note: <ARGS> should be in quotes)
+  -cc|--clear-cache           Clear caches before running
   -s|--simplify               Include a paket simplify
   -u|--update                 Include a paket update
   -np|--no-prompt             Never prompt user input

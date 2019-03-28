@@ -10,10 +10,12 @@ With added ability to sort dependencies and references files alphabetically prio
 
 # Installation
 
-* Unzip the release
-* Add folder you unzipped into into your PATH
+* Download latest release Zip from https://github.com/BlythMeister/PaketSorter/releases/latest
+* Unzip the application into a folder on your machine
+* Add the folder you unzipped paket sorter into to your PATH variable
+* In any directory call `PaketSorter` as below
 
-# Usages
+# Usage
 
 ```
 Usage: PaketSorter [options]

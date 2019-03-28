@@ -139,7 +139,6 @@ namespace PaketSorter
                 var newContent = new List<string>();
                 var nugetBlock = new List<string>();
                 var onNuget = false;
-                var previousLineBreak = false;
 
                 foreach (var line in content)
                 {
@@ -150,11 +149,6 @@ namespace PaketSorter
                     else if (!string.IsNullOrWhiteSpace(line))
                     {
                         onNuget = true;
-                        previousLineBreak = false;
-                    }
-                    else
-                    {
-                        previousLineBreak = true;
                     }
 
                     if (onNuget && !string.IsNullOrWhiteSpace(line))
@@ -168,12 +162,7 @@ namespace PaketSorter
                         {
                             newContent.AddRange(nugetBlock.OrderBy(x => x));
                             nugetBlock.Clear();
-                        }
-
-                        if (previousLineBreak)
-                        {
                             newContent.Add("");
-                            previousLineBreak = false;
                         }
 
                         if (!string.IsNullOrWhiteSpace(line))
@@ -186,9 +175,13 @@ namespace PaketSorter
                 if (nugetBlock.Any())
                 {
                     newContent.AddRange(nugetBlock.OrderBy(x => x));
+                    newContent.Add("");
                 }
 
-                newContent.Add("");
+                if (newContent.Count == 0)
+                {
+                    newContent.Add("");
+                }
 
                 File.WriteAllLines(file, newContent);
             }
@@ -204,22 +197,16 @@ namespace PaketSorter
                 var newContent = new List<string>();
                 var nugetBlock = new List<string>();
                 var onNuget = false;
-                var previousLineBreak = false;
 
                 foreach (var line in content)
                 {
-                    if (line.Trim().StartsWith("nuget"))
+                    if (line.Trim().StartsWith("nuget") || line.Trim().StartsWith("clitool"))
                     {
                         onNuget = true;
-                        previousLineBreak = false;
                     }
                     else if (!string.IsNullOrWhiteSpace(line))
                     {
                         onNuget = false;
-                    }
-                    else
-                    {
-                        previousLineBreak = true;
                     }
 
                     if (onNuget && !string.IsNullOrWhiteSpace(line))
@@ -231,14 +218,10 @@ namespace PaketSorter
                     {
                         if (nugetBlock.Any())
                         {
-                            newContent.AddRange(nugetBlock.OrderBy(x => x));
-                            nugetBlock.Clear();
-                        }
-
-                        if (previousLineBreak)
-                        {
                             newContent.Add("");
-                            previousLineBreak = false;
+                            newContent.AddRange(nugetBlock.OrderBy(x => x));
+                            newContent.Add("");
+                            nugetBlock.Clear();
                         }
 
                         if (!string.IsNullOrWhiteSpace(line))
@@ -250,10 +233,15 @@ namespace PaketSorter
 
                 if (nugetBlock.Any())
                 {
+                    newContent.Add("");
                     newContent.AddRange(nugetBlock.OrderBy(x => x));
+                    newContent.Add("");
                 }
 
-                newContent.Add("");
+                if (newContent.Count == 0)
+                {
+                    newContent.Add("");
+                }
 
                 File.WriteAllLines(file, newContent);
             }

@@ -11,21 +11,22 @@ namespace PaketSorter
 {
     internal class Sorter
     {
-        public static int Run(string rootDir, bool noPrompt, bool simplify, bool update, string updateArgs, string installArgs, string simplifyArgs)
+        public static int Run(Runner runner)
         {
             Console.WriteLine($"Starting at {DateTime.UtcNow:u}");
 
             try
             {
-                CheckForNewVersion(noPrompt);
-                rootDir = string.IsNullOrWhiteSpace(rootDir) ? Environment.CurrentDirectory : rootDir;
+                CheckForNewVersion(runner.NoPrompt);
+                var rootDir = string.IsNullOrWhiteSpace(runner.Directory) ? Environment.CurrentDirectory : runner.Directory;
                 ValidatePaths(rootDir);
                 Console.WriteLine($"Running against: {rootDir}");
-                if (update) RunPaketCommand(rootDir, "update", updateArgs);
+                if (runner.ClearCache) RunPaketCommand(rootDir, "clear-cache", "--clear-local");
+                if (runner.Update) RunPaketCommand(rootDir, "update", runner.UpdateArgs);
                 SortReferences(rootDir);
                 SortDependencies(rootDir);
-                if (simplify) RunPaketCommand(rootDir, "simplify", simplifyArgs);
-                RunPaketCommand(rootDir, "install", installArgs);
+                if (runner.Simplify) RunPaketCommand(rootDir, "simplify", runner.SimplifyArgs);
+                RunPaketCommand(rootDir, "install", runner.InstallArgs);
 
                 Console.WriteLine($"Done at {DateTime.UtcNow:u}");
                 return 0;
@@ -38,7 +39,7 @@ namespace PaketSorter
             }
             finally
             {
-                if (!noPrompt)
+                if (!runner.NoPrompt)
                 {
                     Console.WriteLine("Press Enter To Close...");
                     Console.ReadLine();

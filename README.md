@@ -28,7 +28,10 @@ Options:
   -cc|--clear-cache           Clear caches before running
   -s|--simplify               Include a paket simplify
   -u|--update                 Include a paket update
+  -r|--reinstall              Delete the lock file and create from scratch
+  -co|--clean-obj             Clean obj folders to force a full update
   -np|--no-prompt             Never prompt user input
+  -v|--verbose                Verbose logging
   -?|-h|--help                Show help information
 ```
 

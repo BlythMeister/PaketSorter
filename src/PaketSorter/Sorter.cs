@@ -17,7 +17,11 @@ namespace PaketSorter
 
             try
             {
-                CheckForNewVersion(runner.NoPrompt);
+                if (!CheckForNewVersion(runner.NoPrompt, runner.Verbose))
+                {
+                    return -1;
+                }
+
                 var rootDir = string.IsNullOrWhiteSpace(runner.Directory) ? Environment.CurrentDirectory : runner.Directory;
                 ValidatePaths(rootDir);
                 Console.WriteLine($"Running against: {rootDir}");
@@ -107,7 +111,7 @@ namespace PaketSorter
             }
         }
 
-        private static void CheckForNewVersion(bool noPrompt)
+        private static bool CheckForNewVersion(bool noPrompt, bool verbose)
         {
             if (!Debugger.IsAttached)
             {
@@ -127,8 +131,12 @@ namespace PaketSorter
                         Console.WriteLine("There is a new version of Paket Sorter, visit https://github.com/BlythMeister/PaketSorter/releases/latest to download");
                         if (!noPrompt)
                         {
-                            Console.WriteLine($"Press Enter to continue with version {currentVersion}");
-                            Console.ReadLine();
+                            Console.WriteLine($"Press type 'oldver' to continue with version {currentVersion}");
+                            if (Console.ReadLine()?.ToLower() != "oldver")
+                            {
+                                Console.WriteLine("Stopping as you have an old version");
+                                return false;
+                            }
                         }
                     }
                     else
@@ -139,14 +147,18 @@ namespace PaketSorter
                 catch (Exception e)
                 {
                     Console.WriteLine("Unable to check for latest version of Paket Sorter");
-                    Console.WriteLine(e);
-                    if (!noPrompt)
+                    if (verbose)
                     {
-                        Console.WriteLine($"Press Enter to continue with version {currentVersion}");
-                        Console.ReadLine();
+                        Console.WriteLine(e);
+                    }
+                    else
+                    {
+                        Console.WriteLine(e.Message);
                     }
                 }
             }
+
+            return true;
         }
 
         private static void ValidatePaths(string rootDir)

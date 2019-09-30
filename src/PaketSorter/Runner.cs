@@ -37,6 +37,9 @@ namespace PaketSorter
         [Option("-np|--no-prompt", "Never prompt user input", CommandOptionType.NoValue)]
         public bool NoPrompt { get; }
 
+        [Option("-v|--verbose", "Verbose logging", CommandOptionType.NoValue)]
+        public bool Verbose { get; }
+
         private int OnExecute() => Sorter.Run(this);
     }
 }

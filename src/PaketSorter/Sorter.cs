@@ -70,7 +70,14 @@ namespace PaketSorter
             catch (Exception e)
             {
                 Console.WriteLine($"Failed at {DateTime.UtcNow:u}");
-                Console.WriteLine(e);
+                if (runner.Verbose)
+                {
+                    Console.WriteLine(e);
+                }
+                else
+                {
+                    Console.WriteLine(e.Message);
+                }
                 return -1;
             }
             finally

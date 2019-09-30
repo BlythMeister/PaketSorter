@@ -19,8 +19,8 @@ build_script:
 - cmd: dotnet publish src\PaketSorter.sln --runtime win-x64 --configuration Release /p:PublishSingleFile=true /p:DebugType=None
 test: off
 artifacts:
-- path: src\PaketSorter\bin\Release\netcoreapp2.2\win-x64\publish
-  name: PaketSorter.$(appveyor_build_version)
+- path: src\PaketSorter\bin\Release\netcoreapp3.0\win-x64\publish\PaketSorter.exe
+  name: PaketSorter.exe
 deploy:
 - provider: GitHub
   tag: v$(appveyor_build_version)
@@ -29,6 +29,6 @@ deploy:
   auth_token:
     secure: g+iWKsE2NIl0nbHRppdKG9viG1Drk5x6U++4dXtMfM9FLyOFqaRafq6qKpkyO9x7
   repository: BlythMeister/PaketSorter
-  artifact: src\PaketSorter\bin\Release\netcoreapp2.2\win-x64\publish\PaketSorter.exe
+  artifact: src\PaketSorter\bin\Release\netcoreapp3.0\win-x64\publish\PaketSorter.exe
   on:
     branch: master

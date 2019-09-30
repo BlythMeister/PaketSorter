@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using McMaster.Extensions.CommandLineUtils;
+﻿using McMaster.Extensions.CommandLineUtils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PaketSorter
 {
@@ -27,6 +27,12 @@ namespace PaketSorter
 
         [Option("-u|--update", "Include a paket update", CommandOptionType.NoValue)]
         public bool Update { get; }
+
+        [Option("-r|--reinstall", "Delete the lock file and create from scratch", CommandOptionType.NoValue)]
+        public bool Reinstall { get; }
+
+        [Option("-co|--clean-obj", "Clean obj folders to force a full update", CommandOptionType.NoValue)]
+        public bool CleanObj { get; }
 
         [Option("-np|--no-prompt", "Never prompt user input", CommandOptionType.NoValue)]
         public bool NoPrompt { get; }

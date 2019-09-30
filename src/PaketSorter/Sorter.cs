@@ -21,11 +21,47 @@ namespace PaketSorter
                 var rootDir = string.IsNullOrWhiteSpace(runner.Directory) ? Environment.CurrentDirectory : runner.Directory;
                 ValidatePaths(rootDir);
                 Console.WriteLine($"Running against: {rootDir}");
-                if (runner.ClearCache) RunPaketCommand(rootDir, "clear-cache", "--clear-local");
-                if (runner.Update) RunPaketCommand(rootDir, "update", runner.UpdateArgs);
+                if (runner.ClearCache)
+                {
+                    RunPaketCommand(rootDir, "clear-cache", "--clear-local");
+                }
+
+                if (runner.CleanObj)
+                {
+                    foreach (var paketProps in new DirectoryInfo(rootDir).GetFiles("*.paket.props", SearchOption.AllDirectories))
+                    {
+                        foreach (var file in paketProps.Directory?.GetFiles() ?? new FileInfo[0])
+                        {
+                            file.Delete();
+                        }
+                    }
+                }
+
+                if (runner.Update)
+                {
+                    if (runner.Reinstall)
+                    {
+                        Console.WriteLine("Skipping Update as reinstall will cover it");
+                    }
+                    else
+                    {
+                        RunPaketCommand(rootDir, "update", runner.UpdateArgs);
+                    }
+                }
+
                 SortReferences(rootDir);
                 SortDependencies(rootDir);
-                if (runner.Simplify) RunPaketCommand(rootDir, "simplify", runner.SimplifyArgs);
+
+                if (runner.Reinstall)
+                {
+                    File.Delete(Path.Combine(rootDir, "paket.lock"));
+                }
+
+                if (runner.Simplify)
+                {
+                    RunPaketCommand(rootDir, "simplify", runner.SimplifyArgs);
+                }
+
                 RunPaketCommand(rootDir, "install", runner.InstallArgs);
 
                 Console.WriteLine($"Done at {DateTime.UtcNow:u}");

@@ -29,6 +29,6 @@ deploy:
   auth_token:
     secure: g+iWKsE2NIl0nbHRppdKG9viG1Drk5x6U++4dXtMfM9FLyOFqaRafq6qKpkyO9x7
   repository: BlythMeister/PaketSorter
-  artifact: src\PaketSorter\bin\Release\netcoreapp2.2\win-x64\PaketSorter.$(appveyor_build_version).zip
+  artifact: src\PaketSorter\bin\Release\netcoreapp2.2\win-x64\publish\PaketSorter.exe
   on:
     branch: master

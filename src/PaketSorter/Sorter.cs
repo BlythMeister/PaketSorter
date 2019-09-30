@@ -21,54 +21,56 @@ namespace PaketSorter
                 var rootDir = string.IsNullOrWhiteSpace(runner.Directory) ? Environment.CurrentDirectory : runner.Directory;
                 ValidatePaths(rootDir);
                 Console.WriteLine($"Running against: {rootDir}");
+                Console.WriteLine("-----------------------------------------------------");
                 if (runner.ClearCache)
                 {
                     RunPaketCommand(rootDir, "clear-cache", "--clear-local");
+                    Console.WriteLine("-----------------------------------------------------");
                 }
 
                 if (runner.CleanObj)
                 {
-                    foreach (var paketProps in new DirectoryInfo(rootDir).GetFiles("*.paket.props", SearchOption.AllDirectories))
-                    {
-                        foreach (var file in paketProps.Directory?.GetFiles() ?? new FileInfo[0])
-                        {
-                            file.Delete();
-                        }
-                    }
+                    CleanObjFiles(rootDir);
+                    Console.WriteLine("-----------------------------------------------------");
                 }
-
-                if (runner.Update)
-                {
-                    if (runner.Reinstall)
-                    {
-                        Console.WriteLine("Skipping Update as reinstall will cover it");
-                    }
-                    else
-                    {
-                        RunPaketCommand(rootDir, "update", runner.UpdateArgs);
-                    }
-                }
-
-                SortReferences(rootDir);
-                SortDependencies(rootDir);
 
                 if (runner.Reinstall)
                 {
+                    if (runner.Update)
+                    {
+                        Console.WriteLine("Skipping Update as reinstall install newest versions");
+                    }
+
+                    Console.WriteLine("Deleting paket.lock file");
                     File.Delete(Path.Combine(rootDir, "paket.lock"));
+                    Console.WriteLine("-----------------------------------------------------");
                 }
+                else if (runner.Update)
+                {
+                    RunPaketCommand(rootDir, "update", runner.UpdateArgs);
+                    Console.WriteLine("-----------------------------------------------------");
+                }
+
+                SortReferences(rootDir);
+                Console.WriteLine("-----------------------------------------------------");
+                SortDependencies(rootDir);
+                Console.WriteLine("-----------------------------------------------------");
 
                 if (runner.Simplify)
                 {
                     RunPaketCommand(rootDir, "simplify", runner.SimplifyArgs);
+                    Console.WriteLine("-----------------------------------------------------");
                 }
 
                 RunPaketCommand(rootDir, "install", runner.InstallArgs);
+                Console.WriteLine("-----------------------------------------------------");
 
                 Console.WriteLine($"Done at {DateTime.UtcNow:u}");
                 return 0;
             }
             catch (Exception e)
             {
+                Console.WriteLine("-----------------------------------------------------");
                 Console.WriteLine($"Failed at {DateTime.UtcNow:u}");
                 if (runner.Verbose)
                 {
@@ -90,6 +92,21 @@ namespace PaketSorter
             }
         }
 
+        private static void CleanObjFiles(string rootDir)
+        {
+            foreach (var paketProps in new DirectoryInfo(rootDir).GetFiles("*.paket.props", SearchOption.AllDirectories))
+            {
+                if (paketProps.Directory != null)
+                {
+                    Console.WriteLine($"Cleaning files in {paketProps.Directory.FullName}");
+                    foreach (var file in paketProps.Directory?.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                }
+            }
+        }
+
         private static void CheckForNewVersion(bool noPrompt)
         {
             if (!Debugger.IsAttached)
@@ -98,27 +115,25 @@ namespace PaketSorter
 
                 try
                 {
-                    using (var webClient = new WebClient())
+                    using var webClient = new WebClient();
+                    webClient.Headers.Add("User-Agent", "PaketSorter");
+                    var data = webClient.DownloadString("https://api.github.com/repos/BlythMeister/PaketSorter/releases/latest");
+                    dynamic latestRelease = JObject.Parse(data);
+
+                    var latestVersion = Version.Parse(latestRelease.tag_name.Value.Substring(1));
+
+                    if (latestVersion.CompareTo(currentVersion) > 0)
                     {
-                        webClient.Headers.Add("User-Agent", "PaketSorter");
-                        var data = webClient.DownloadString("https://api.github.com/repos/BlythMeister/PaketSorter/releases/latest");
-                        dynamic latestRelease = JObject.Parse(data);
-
-                        var latestVersion = Version.Parse(latestRelease.tag_name.Value.Substring(1));
-
-                        if (latestVersion.CompareTo(currentVersion) > 0)
+                        Console.WriteLine("There is a new version of Paket Sorter, visit https://github.com/BlythMeister/PaketSorter/releases/latest to download");
+                        if (!noPrompt)
                         {
-                            Console.WriteLine("There is a new version of Paket Sorter, visit https://github.com/BlythMeister/PaketSorter/releases/latest to download");
-                            if (!noPrompt)
-                            {
-                                Console.WriteLine($"Press Enter to continue with version {currentVersion}");
-                                Console.ReadLine();
-                            }
+                            Console.WriteLine($"Press Enter to continue with version {currentVersion}");
+                            Console.ReadLine();
                         }
-                        else
-                        {
-                            Console.WriteLine("You are already running the latest version of Paket Sorter");
-                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("You are already running the latest version of Paket Sorter");
                     }
                 }
                 catch (Exception e)

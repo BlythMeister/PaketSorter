@@ -16,7 +16,7 @@ dotnet_csproj:
   file_version: '$(appveyor_build_version)'
   informational_version: '$(appveyor_build_version)'
 build_script:
-- cmd: dotnet publish src\PaketSorter.sln --runtime win-x64 --configuration Release /p:PublishSingleFile=true /p:PublishTrimmed=true /p:DebugType=None
+- cmd: dotnet publish src\PaketSorter.sln --runtime win-x64 --configuration Release /p:PublishSingleFile=true /p:DebugType=None
 test: off
 artifacts:
 - path: src\PaketSorter\bin\Release\netcoreapp3.0\win-x64\publish\PaketSorter.exe

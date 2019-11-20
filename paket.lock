@@ -1,7 +1,7 @@
 RESTRICTION: == netcoreapp3.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    McMaster.Extensions.CommandLineUtils (2.4.2)
+    McMaster.Extensions.CommandLineUtils (2.4.4)
       System.ComponentModel.Annotations (>= 4.4.1)
-    Newtonsoft.Json (12.0.2)
+    Newtonsoft.Json (12.0.3)
     System.ComponentModel.Annotations (4.6)

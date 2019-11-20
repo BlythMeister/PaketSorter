@@ -289,7 +289,8 @@ namespace PaketSorter
                         if (nugetBlock.Any())
                         {
                             newContent.Add("");
-                            newContent.AddRange(nugetBlock.OrderBy(x => x));
+                            newContent.AddRange(nugetBlock.Where(x => x.Trim().StartsWith("nuget")).OrderBy(x => x));
+                            newContent.AddRange(nugetBlock.Where(x => x.Trim().StartsWith("clitool")).OrderBy(x => x));
                             newContent.Add("");
                             nugetBlock.Clear();
                         }
@@ -304,7 +305,8 @@ namespace PaketSorter
                 if (nugetBlock.Any())
                 {
                     newContent.Add("");
-                    newContent.AddRange(nugetBlock.OrderBy(x => x));
+                    newContent.AddRange(nugetBlock.Where(x => x.Trim().StartsWith("nuget")).OrderBy(x => x));
+                    newContent.AddRange(nugetBlock.Where(x => x.Trim().StartsWith("clitool")).OrderBy(x => x));
                     newContent.Add("");
                 }
 

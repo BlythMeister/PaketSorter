@@ -1,5 +1,6 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace PaketSorter
 {
@@ -40,6 +41,6 @@ namespace PaketSorter
         [Option("-v|--verbose", "Verbose logging", CommandOptionType.NoValue)]
         public bool Verbose { get; }
 
-        private int OnExecute() => Sorter.Run(this);
+        private int OnExecute(CancellationToken cancellationToken) => Sorter.Run(this, cancellationToken);
     }
 }

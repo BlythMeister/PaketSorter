@@ -6,12 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 
 namespace PaketSorter
 {
     internal class Sorter
     {
-        public static int Run(Runner runner)
+        public static int Run(Runner runner, CancellationToken cancellationToken)
         {
             Console.WriteLine($"Starting at {DateTime.UtcNow:u}");
 
@@ -26,16 +27,20 @@ namespace PaketSorter
                 ValidatePaths(rootDir);
                 Console.WriteLine($"Running against: {rootDir}");
                 Console.WriteLine("-----------------------------------------------------");
+                if (cancellationToken.IsCancellationRequested) return -2;
+
                 if (runner.ClearCache)
                 {
-                    RunPaketCommand(rootDir, "clear-cache", "--clear-local");
+                    RunPaketCommand(rootDir, "clear-cache", "--clear-local", cancellationToken);
                     Console.WriteLine("-----------------------------------------------------");
+                    if (cancellationToken.IsCancellationRequested) return -2;
                 }
 
                 if (runner.CleanObj)
                 {
                     CleanObjFiles(rootDir);
                     Console.WriteLine("-----------------------------------------------------");
+                    if (cancellationToken.IsCancellationRequested) return -2;
                 }
 
                 if (runner.Reinstall)
@@ -48,26 +53,32 @@ namespace PaketSorter
                     Console.WriteLine("Deleting paket.lock file");
                     File.Delete(Path.Combine(rootDir, "paket.lock"));
                     Console.WriteLine("-----------------------------------------------------");
+                    if (cancellationToken.IsCancellationRequested) return -2;
                 }
                 else if (runner.Update)
                 {
-                    RunPaketCommand(rootDir, "update", runner.UpdateArgs);
+                    RunPaketCommand(rootDir, "update", runner.UpdateArgs, cancellationToken);
                     Console.WriteLine("-----------------------------------------------------");
+                    if (cancellationToken.IsCancellationRequested) return -2;
                 }
 
                 SortReferences(rootDir);
                 Console.WriteLine("-----------------------------------------------------");
+                if (cancellationToken.IsCancellationRequested) return -2;
                 SortDependencies(rootDir);
                 Console.WriteLine("-----------------------------------------------------");
+                if (cancellationToken.IsCancellationRequested) return -2;
 
                 if (runner.Simplify)
                 {
-                    RunPaketCommand(rootDir, "simplify", runner.SimplifyArgs);
+                    RunPaketCommand(rootDir, "simplify", runner.SimplifyArgs, cancellationToken);
                     Console.WriteLine("-----------------------------------------------------");
+                    if (cancellationToken.IsCancellationRequested) return -2;
                 }
 
-                RunPaketCommand(rootDir, "install", runner.InstallArgs);
+                RunPaketCommand(rootDir, "install", runner.InstallArgs, cancellationToken);
                 Console.WriteLine("-----------------------------------------------------");
+                if (cancellationToken.IsCancellationRequested) return -2;
 
                 Console.WriteLine($"Done at {DateTime.UtcNow:u}");
                 return 0;
@@ -84,10 +95,16 @@ namespace PaketSorter
                 {
                     Console.WriteLine(e.Message);
                 }
+
                 return -1;
             }
             finally
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Console.WriteLine("Execution Cancelled");
+                }
+
                 if (!runner.NoPrompt)
                 {
                     Console.WriteLine("Press Enter To Close...");
@@ -179,7 +196,7 @@ namespace PaketSorter
             }
         }
 
-        private static void RunPaketCommand(string rootDir, string command, string args)
+        private static void RunPaketCommand(string rootDir, string command, string args, CancellationToken cancellationToken)
         {
             var commandPlusArgs = $"{command} {args ?? string.Empty}".Trim();
             Console.WriteLine($"Running paket command: {commandPlusArgs}");
@@ -193,9 +210,13 @@ namespace PaketSorter
             };
 
             var process = Process.Start(paketProcess);
-            while (process != null && !process.StandardOutput.EndOfStream)
+            if (process != null)
             {
-                Console.WriteLine(process.StandardOutput.ReadLine());
+                cancellationToken.Register(() => process.Kill(true));
+                while (!process.StandardOutput.EndOfStream && !process.HasExited)
+                {
+                    Console.WriteLine(process.StandardOutput.ReadLine());
+                }
             }
         }
 

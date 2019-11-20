@@ -32,6 +32,7 @@ Options:
   -co|--clean-obj             Clean obj folders to force a full update
   -np|--no-prompt             Never prompt user input
   -v|--verbose                Verbose logging
+  -ss|--skip-sort             Skip sort
   -?|-h|--help                Show help information
 ```
 

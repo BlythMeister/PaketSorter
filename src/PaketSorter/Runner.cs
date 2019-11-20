@@ -41,6 +41,9 @@ namespace PaketSorter
         [Option("-v|--verbose", "Verbose logging", CommandOptionType.NoValue)]
         public bool Verbose { get; }
 
+        [Option("-ss|--skip-sort", "Skip sort", CommandOptionType.NoValue)]
+        public bool SkipSort { get; }
+
         private int OnExecute(CancellationToken cancellationToken) => Sorter.Run(this, cancellationToken);
     }
 }

@@ -29,6 +29,16 @@ namespace PaketSorter
                 Console.WriteLine("-----------------------------------------------------");
                 if (cancellationToken.IsCancellationRequested) return -2;
 
+                if (!runner.SkipSort)
+                {
+                    SortReferences(rootDir);
+                    Console.WriteLine("-----------------------------------------------------");
+                    if (cancellationToken.IsCancellationRequested) return -2;
+                    SortDependencies(rootDir);
+                    Console.WriteLine("-----------------------------------------------------");
+                    if (cancellationToken.IsCancellationRequested) return -2;
+                }
+
                 if (runner.ClearCache)
                 {
                     RunPaketCommand(rootDir, "clear-cache", "--clear-local", cancellationToken);
@@ -61,13 +71,6 @@ namespace PaketSorter
                     Console.WriteLine("-----------------------------------------------------");
                     if (cancellationToken.IsCancellationRequested) return -2;
                 }
-
-                SortReferences(rootDir);
-                Console.WriteLine("-----------------------------------------------------");
-                if (cancellationToken.IsCancellationRequested) return -2;
-                SortDependencies(rootDir);
-                Console.WriteLine("-----------------------------------------------------");
-                if (cancellationToken.IsCancellationRequested) return -2;
 
                 if (runner.Simplify)
                 {
